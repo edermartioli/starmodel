@@ -293,6 +293,46 @@ plt.show()
 print(res_rot.summary())
 """),
 
+code("""# ── Stellar disk maps at mid-transit ───────────────────────────────────────
+# Show brightness and velocity maps with the starspot and planet visible.
+from starmodel import plot_transit_overview
+
+fig_disk = plot_transit_overview(
+    star, model, result,
+    t_epoch         = orbit.t0,
+    time_format     = "hours",
+    figsize         = (12, 10),
+    disk_resolution = 350,
+    latlon_grid     = True,
+    latlon_dlat     = 30., latlon_dlon = 30.,
+)
+fig_disk.suptitle(
+    "HD 189733 — Stellar disk at mid-transit (TESS simulation)\\n"
+    "Spot: dark patch upper hemisphere  |  Planet: black circle",
+    color="white", fontsize=11, fontweight="bold", y=0.978,
+)
+fig_disk.savefig("tess_hd189733_disk.png", dpi=130, bbox_inches="tight",
+                  facecolor=fig_disk.get_facecolor())
+plt.show()
+"""),
+
+code("""# ── Disk snapshots: spot rotating across 4 phases ──────────────────────────
+# Visualise how the active region appears at φ=0° (disk centre),
+# 90° (east limb), 180° (back, invisible), and 270° (west limb).
+from starmodel.stellar_variability import RotationSimulator
+
+sim_snap  = RotationSimulator(star, HD189733["P_rot"], n_phases_per_cycle=4)
+res_snap  = sim_snap.run(n_cycles=1.)
+fig_snaps = sim_snap.plot_disk_snapshots(res_snap, phases_deg=[0.,90.,180.,270.])
+fig_snaps.suptitle(
+    f"HD 189733 — Spot at 4 rotation phases  (P_rot = {HD189733['P_rot']:.1f} d)",
+    color="white", fontsize=11, fontweight="bold",
+)
+fig_snaps.savefig("tess_hd189733_disk_phases.png", dpi=130,
+                   bbox_inches="tight", facecolor=fig_snaps.get_facecolor())
+plt.show()
+"""),
+
 md("""### Summary
 
 This notebook demonstrated:
@@ -309,6 +349,10 @@ This notebook demonstrated:
 4. **Rotation modulation** — the two rotating starspots produce a photometric
    variability of ~10,000–40,000 ppm at TESS precision, consistent with the
    ~1% peak-to-peak variability reported by Pont et al. (2013).
+
+5. **Stellar disk visualisation** — brightness and velocity maps show the active
+   region clearly; disk snapshots at four rotation phases illustrate the
+   spot's visibility as the star rotates.
 
 **Cross-check with real TESS data:** Public TESS light curves for HD 189733
 (TIC 256364928) can be downloaded from MAST (`lightkurve` package) and compared
@@ -563,6 +607,46 @@ plt.show()
 print(res19_rot.summary())
 """),
 
+code("""# ── Stellar disk at mid-transit: brightness and velocity maps ───────────────
+from starmodel import plot_transit_overview
+
+fig_disk = plot_transit_overview(
+    star19, model19, result19,
+    t_epoch         = orbit19.t0,
+    time_format     = "hours",
+    figsize         = (12, 10),
+    disk_resolution = 350,
+    latlon_grid     = True,
+    latlon_dlat     = 30., latlon_dlon = 30.,
+)
+fig_disk.suptitle(
+    "WASP-19 — Stellar disk at mid-transit (SPARC4 simulation)\\n"
+    "Active region (spot + facula) visible at upper hemisphere",
+    color="white", fontsize=11, fontweight="bold", y=0.978,
+)
+fig_disk.savefig("sparc4_wasp19_disk.png", dpi=130, bbox_inches="tight",
+                  facecolor=fig_disk.get_facecolor())
+plt.show()
+"""),
+
+code("""# ── Disk snapshots at 4 rotation phases ────────────────────────────────────
+# WASP-19 active region (spot + facula) rotating across the visible disk.
+# The chromaticity of the spot changes from limb (facular enhancement) to
+# disk centre (spot darkening dominant).
+
+fig_snaps = sim19.plot_disk_snapshots(
+    res19_rot,
+    phases_deg = [0., 90., 180., 270.],
+)
+fig_snaps.suptitle(
+    f"WASP-19 — Active region at 4 rotation phases  (P_rot = {P_rot_wasp19} d)",
+    color="white", fontsize=11, fontweight="bold",
+)
+fig_snaps.savefig("sparc4_wasp19_disk_phases.png", dpi=130,
+                   bbox_inches="tight", facecolor=fig_snaps.get_facecolor())
+plt.show()
+"""),
+
 md("""### Summary
 
 This notebook demonstrated:
@@ -577,6 +661,10 @@ This notebook demonstrated:
 3. **Rotation variability** — the rotating starspot produces a sinusoidal
    brightness modulation of ~10,000–40,000 ppm with a clear chromatic
    signature in the g−r, r−i, i−z colour indices.
+
+4. **Stellar disk visualisation** — brightness and velocity maps show the
+   active region (spot + facula) at mid-transit; disk snapshots trace the
+   region across the four principal rotation phases.
 
 **How SPARC4 data compares:**
 SPARC4 achieves ~1 mmag photometric precision per data point in typical
@@ -836,7 +924,9 @@ ax1.annotate(f"WASP-79 RM amp. = {rm_amp_79:.0f} m/s", xy=(1.5, result79.delta_r
 
 import matplotlib.cm as mpl_cm
 rv  = result79.rv_grid
-res = result79.ccf_residual
+# Compute CCF residual inline: CCF(t) − OOT reference
+# TransitResult stores ccf_map (n_times×n_rv) and ccf_oot (n_rv,)
+res = result79.ccf_map - result79.ccf_oot[np.newaxis, :]
 in_tr = result79.flux < 1. - 1e-5
 sig   = float(np.std(res[in_tr])) if in_tr.any() else 1e-4
 vlim  = max(3.*sig, 1e-4)
@@ -889,7 +979,7 @@ for ax in (ax1, ax2):
 ti_mid   = len(result79.times) // 2
 ti_early = np.where(result79.times - orbit79.t0 > -0.03)[0][0]  # just after T1
 
-ccf_oot  = result79.ccf_mean
+ccf_oot  = result79.ccf_oot   # out-of-transit reference CCF (stored in TransitResult)
 ccf_mid  = result79.ccf_map[ti_mid]
 ccf_ingr = result79.ccf_map[ti_early]
 
