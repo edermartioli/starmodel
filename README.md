@@ -31,7 +31,7 @@ pip install starmodel
 Or from source:
 
 ```bash
-git clone https://github.com/edermartioli/starmodel
+git clone https://github.com/youruser/starmodel
 cd starmodel
 pip install .
 ```
