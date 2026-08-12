@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name            = "starmodel"
+version         = "0.1.0"
+description     = "Stellar surface & planetary transit modelling framework"
+readme          = "README.md"
+license         = { text = "GPL-3.0-or-later" }
+requires-python = ">=3.10"
+authors         = [{ name = "starmodel contributors" }]
+
+keywords = [
+    "astronomy","stellar-physics","exoplanets","transit",
+    "rossiter-mclaughlin","stellar-activity","starspots",
+    "granulation","radial-velocity","CCF","TESS","SPARC4","GHOST",
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = ["numpy>=1.24", "scipy>=1.10", "matplotlib>=3.7"]
+
+[project.optional-dependencies]
+fits     = ["astropy>=5.0"]
+notebooks = ["jupyter", "nbformat", "ipykernel"]
+dev      = ["pytest", "pillow", "nbformat"]
+
+[project.urls]
+Homepage = "https://github.com/youruser/starmodel"
+Issues   = "https://github.com/youruser/starmodel/issues"
+
+[project.scripts]
+starmodel-notebooks = "starmodel.examples:generate_notebooks"
+
+[tool.setuptools.packages.find]
+where   = ["."]
+include = ["starmodel*"]
+
+[tool.setuptools.package-data]
+"starmodel.data"     = ["*.json", "*.csv", "*.dat"]
+"starmodel.examples" = ["*.py"]

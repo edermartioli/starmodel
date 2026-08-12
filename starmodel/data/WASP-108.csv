@@ -1,0 +1,27 @@
+component,parameter,value,uncertainty,unit
+star,name,WASP-108,,
+star,teff,5975.76,80.0,K
+star,logg,4.2226,0.05,cgs
+star,mass,1.0997,0.06,M_sun
+star,radius,1.3441,0.03,R_sun
+star,metallicity,0.0,0.1,[Fe/H]
+star,vsini,5.7537,0.3,km/s
+star,stellar_inclination,90.0,5.0,deg
+star,differential_rotation,0.0,0.0,
+star,spinorbit_obliquity,6.5585,1.5,deg
+star,limb_darkening_law,quadratic,,
+star,ld_coeff_0,0.45,0.02,
+star,ld_coeff_1,0.3,0.02,
+planet,name,WASP-108 b,,
+planet,radius_rstar,0.11154,0.001,Rp/R*
+planet,orbital_sma_rstar,6.9879,0.05,a/R*
+planet,orbital_period_days,2.67555033,1e-07,days
+planet,orbital_ecc,0.0,0.0,
+planet,orbital_omega,90.0,0.0,deg
+planet,orbital_Omega,0.0,0.0,deg
+planet,orbital_inc,88.5846,0.2,deg
+planet,impact_parameter,,0.0,
+planet,spinorbit_obliquity,6.5585,1.5,deg
+planet,rv_semi_amplitude,0.0891,0.005,km/s
+planet,transit_time_bjd,2458597.03912,0.0001,BJD
+planet,time_of_periastron_bjd,2458597.03912,0.0001,BJD
